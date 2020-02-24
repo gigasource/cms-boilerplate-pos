@@ -1,0 +1,3 @@
+[submodule "backoffice"]
+	path = backoffice
+	url = https://github.com/gigasource/backoffice.git

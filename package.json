@@ -1,0 +1,15 @@
+{
+  "name": "test_init_cms",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cms": "cms -e -c ./config/cloudsignage-config.json"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cms": "github:gigasource/cms#deploy_optimize"
+  }
+}
