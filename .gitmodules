@@ -1,3 +1,6 @@
 [submodule "backoffice"]
 	path = backoffice
 	url = https://github.com/gigasource/backoffice.git
+[submodule "cms"]
+	path = cms
+	url = https://github.com/gigasource/cms.git
