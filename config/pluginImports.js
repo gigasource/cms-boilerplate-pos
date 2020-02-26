@@ -9,7 +9,7 @@ import cms from 'cms';
 //   cms.registerComponent(compName, {}, component);
 // });
 
-const cloudSignageReq = require.context('../plugins/cloud-signage-plugin', true, /.*\.vue$/);
+const cloudSignageReq = require.context('../plugins/cloud-signage-plugin', true, /^((?!node_modules).)*\.vue$/);
 cloudSignageReq.keys().map(file => {
   const component = cloudSignageReq(file).default;
   const compName = file.split('/').pop().split('.vue')[0];
