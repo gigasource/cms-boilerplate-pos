@@ -110,3 +110,9 @@ dist
 .vscode-test
 .idea
 .DS_Store
+
+*.iml
+
+/plugins
+
+/dist

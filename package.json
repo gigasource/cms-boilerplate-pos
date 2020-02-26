@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "cms": "cms start -c ./config/cloudsignage-config.json"
+    "cms": "cms start -c ./config/cloudsignage-config.json",
+    "submodule-update": "git submodule foreach -q --recursive 'git checkout $(git config -f $toplevel/.gitmodules submodule.$name.branch || echo master) && git pull'",
+    "submodule-ci-update": "git submodule update --init --recursive",
+    "serve": "cd backoffice && npm run serve",
+    "pos": "node cms/backend/use/index.js --config=./config/pos-config.json"
   },
   "author": "",
   "license": "ISC",

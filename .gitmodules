@@ -1,6 +1,12 @@
 [submodule "backoffice"]
 	path = backoffice
 	url = https://github.com/gigasource/backoffice.git
+	branch = deploy_optimize
 [submodule "cms"]
 	path = cms
 	url = https://github.com/gigasource/cms.git
+	branch = deploy_optimize
+[submodule "cms-configs"]
+	path = cms-configs
+	url = https://github.com/gigasource/cms-configs
+	branch = master
