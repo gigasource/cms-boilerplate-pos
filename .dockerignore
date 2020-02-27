@@ -1,0 +1,13 @@
+node_modules
+cicd/Dockerfile
+cicd/Jenkinsfile
+cms/.gitignore
+.gitmodules
+.circleci
+.idea
+.docker
+.dockerignore
+README.md
+yarn-error.log
+dist
+cms-configs
