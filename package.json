@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "preinstall": "mkdir config && npm run submodule-ci-update && npm run submodule-update && npm run init-submodule",
+    "build": "cd backoffice && npm run build",
+    "init-submodule": "cd backoffice && npm i && cd ..",
     "test": "echo \"Error: no test specified\" && exit 1",
     "cms": "cms start -c ./config/cloudsignage-config.json",
     "submodule-update": "git submodule foreach -q --recursive 'git checkout $(git config -f $toplevel/.gitmodules submodule.$name.branch || echo master) && git pull'",
