@@ -24,7 +24,7 @@ pipeline {
         sh "cp -r ~/.ssh ./ssh"
         sh "mkdir -p ./config"
         sh "mkdir -p ./plugins"
-        sh "mv ./cms-config-vn-cluster.json ./config/config.json"
+        sh "mv ./$configFileName ./config/config.json"
       }
     }
 
