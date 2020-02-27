@@ -10,7 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "cms": "cms start -c ./config/cloudsignage-config.json",
     "submodule-update": "git submodule foreach -q --recursive 'git checkout $(git config -f $toplevel/.gitmodules submodule.$name.branch || echo master) && git pull'",
-    "submodule-ci-update": "git submodule update --init --recursive",
+    "submodule-ci-update": "git submodule update --init --recursive --remote",
     "frontend": "cd backoffice && npm run serve",
     "backend": "node cms/backend/use/index.js --config=./config/config.json"
   },
