@@ -1,23 +1,32 @@
+# Intermediate container, this will be disposed in the final image
 FROM node:10 as intermediate
-WORKDIR /home/giga-office
-RUN mkdir -p /home/giga-office/storage
-COPY package*.json ./
-RUN npm install
+WORKDIR /home/gigasource
+RUN mkdir -p /home/gigasource/storage
 COPY . .
-WORKDIR /home/giga-office/backoffice
-RUN npm install
-RUN npm run build
-WORKDIR /home/giga-office
-RUN rm -rf ./backoffice
-RUN rm -rf ./cms-configs
+# Set access token to access private github repositories
+RUN mv ./ssh ~/.ssh && \
+    chmod -R 700 ~/.ssh && \
+# Build, NODE_ENV is set to production to skip npm preinstall script
+    NODE_ENV=production npm install --unsafe-perm && \
+    npm run install-plugins
+WORKDIR /home/gigasource/backoffice
+RUN npm install && \
+    npm run build
+WORKDIR /home/gigasource
+RUN rm -rf ./backoffice && \
+    rm -rf ./cms-configs && \
+    rm -rf ~/.ssh
 
+# Final image will be built from this point
 FROM node:10
-WORKDIR /home/giga-office
-RUN apt update
-RUN apt install cabextract -y
-RUN apt install xfonts-utils -y
-RUN wget http://ftp.de.debian.org/debian/pool/contrib/m/msttcorefonts/ttf-mscorefonts-installer_3.6_all.deb
-RUN dpkg -i ttf-mscorefonts-installer_3.6_all.deb
-COPY --from=intermediate /home/giga-office /home/giga-office
+WORKDIR /home/gigasource
+# Install fonts
+RUN apt update && \
+    apt install cabextract -y && \
+    apt install xfonts-utils -y && \
+    wget http://ftp.de.debian.org/debian/pool/contrib/m/msttcorefonts/ttf-mscorefonts-installer_3.6_all.deb && \
+    dpkg -i ttf-mscorefonts-installer_3.6_all.deb
+# Copy files from intermediate container
+COPY --from=intermediate /home/gigasource /home/gigasource
 EXPOSE 8888
 ENTRYPOINT ["/bin/sh", "./cicd/scripts/container-startup-script.sh"]

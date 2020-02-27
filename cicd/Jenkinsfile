@@ -8,6 +8,8 @@ pipeline {
     registryCredential = 'registry-user'
     rancherWorkloadType = 'deployment'
     rancherWorkloadName = 'cms'
+    configFileName = 'cms-config-vn-cluster.json'
+    kubeNamespace = 'default'
   }
 
   stages {
@@ -17,8 +19,9 @@ pipeline {
           sh "echo $GITBOT_ACCESS_TOKEN > ./gitbot-access-token"
         }
         withCredentials([string(credentialsId: 'gigasource-github-access-token', variable: 'GIGASOURCE_GITHUB_ACCESS_TOKEN')]) {
-          sh "curl -H 'Authorization: token $GIGASOURCE_GITHUB_ACCESS_TOKEN' -H 'Accept: application/vnd.github.v3.raw' -O -L https://api.github.com/repos/gigasource/cms-configs/contents/cms-config-vn-cluster.json"
+          sh "curl -H 'Authorization: token $GIGASOURCE_GITHUB_ACCESS_TOKEN' -H 'Accept: application/vnd.github.v3.raw' -O -L https://api.github.com/repos/gigasource/cms-configs/contents/$configFileName"
         }
+        sh "cp -r ~/.ssh ./ssh"
         sh "mkdir -p ./config"
         sh "mkdir -p ./plugins"
         sh "mv ./cms-config-vn-cluster.json ./config/config.json"
@@ -41,7 +44,7 @@ pipeline {
           ).trim()
         }
 
-        script {image = docker.build("$dockerImageName:$CURRENT_DATETIME", "./cicd")}
+        script {image = docker.build("$dockerImageName:$CURRENT_DATETIME", "-f ./cicd/Dockerfile .")}
       }
     }
 
@@ -64,8 +67,15 @@ pipeline {
     stage('Upgrade image version in Rancher') {
       steps {
         withKubeConfig([credentialsId: 'kubectl-config']) {
+          sh "kubectl config set-context --current --namespace=$kubeNamespace"
           sh "kubectl set image $rancherWorkloadType/$rancherWorkloadName $rancherWorkloadName=$dockerImageName:$CURRENT_DATETIME --record"
         }
+      }
+    }
+
+    stage('Cleanup workspace') {
+      steps {
+        sh "rm -rf ./ssh ./gitbot-access-token ./config"
       }
     }
   }
