@@ -1,37 +1,15 @@
 pipeline {
   agent any
 
-  environment {
-    dockerImageName = 'registry.gigasource.io/cms'
-    dockerImage = ''
-    registryName = 'https://registry.gigasource.io'
-    registryCredential = 'registry-user'
-    rancherWorkloadType = 'deployment'
-    rancherWorkloadName = 'cms'
-    configFileName = 'cms-config-vn-cluster.json'
-    kubeNamespace = 'default'
-  }
-
   stages {
-    stage('Prepare config file') {
+    stage('Prepare files and folders') {
       steps {
         withCredentials([string(credentialsId: 'gitbot-access-token', variable: 'GITBOT_ACCESS_TOKEN')]) {
           sh "echo $GITBOT_ACCESS_TOKEN > ./gitbot-access-token"
         }
-        withCredentials([string(credentialsId: 'gigasource-github-access-token', variable: 'GIGASOURCE_GITHUB_ACCESS_TOKEN')]) {
-          sh "curl -H 'Authorization: token $GIGASOURCE_GITHUB_ACCESS_TOKEN' -H 'Accept: application/vnd.github.v3.raw' -O -L https://api.github.com/repos/gigasource/cms-configs/contents/$configFileName"
-        }
         sh "cp -r ~/.ssh ./ssh"
         sh "mkdir -p ./config"
         sh "mkdir -p ./plugins"
-        sh "mv ./$configFileName ./config/config.json"
-      }
-    }
-
-    stage('Install git submodules') {
-      steps {
-        sh "rm -rf ./backoffice"
-        sh "./cicd/scripts/update-git-submodules.sh"
       }
     }
 
@@ -44,14 +22,14 @@ pipeline {
           ).trim()
         }
 
-        script {image = docker.build("$dockerImageName:$CURRENT_DATETIME", "-f ./cicd/Dockerfile .")}
+        script {image = docker.build("${env.dockerImageName}:$CURRENT_DATETIME", "-f ./cicd/Dockerfile --build-arg CONFIG_FILE_NAME=${env.configFileName} .")}
       }
     }
 
     stage('Push Docker image to registry') {
       steps {
         script {
-          docker.withRegistry(registryName, registryCredential ) {
+          docker.withRegistry(env.registryName, env.registryCredentialId) {
             image.push()
           }
         }
@@ -66,9 +44,9 @@ pipeline {
 
     stage('Upgrade image version in Rancher') {
       steps {
-        withKubeConfig([credentialsId: 'kubectl-config']) {
-          sh "kubectl config set-context --current --namespace=$kubeNamespace"
-          sh "kubectl set image $rancherWorkloadType/$rancherWorkloadName $rancherWorkloadName=$dockerImageName:$CURRENT_DATETIME --record"
+        withKubeConfig([credentialsId: "${env.kubeCredentialId}"]) {
+          sh "kubectl config set-context --current --namespace=${env.kubeNamespace}"
+          sh "kubectl set image ${env.rancherWorkloadType}/${env.rancherWorkloadName} ${env.rancherWorkloadName}=${env.dockerImageName}:$CURRENT_DATETIME --record"
         }
       }
     }

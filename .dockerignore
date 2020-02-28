@@ -2,12 +2,12 @@ node_modules
 cicd/Dockerfile
 cicd/Jenkinsfile
 cms/.gitignore
-.gitmodules
 .circleci
 .idea
 .docker
 .dockerignore
 README.md
+readme.md
 yarn-error.log
 dist
 cms-configs

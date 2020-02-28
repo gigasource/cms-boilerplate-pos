@@ -1,17 +1,17 @@
 # Intermediate container, this will be disposed in the final image
 FROM node:10 as intermediate
+ARG CONFIG_FILE_NAME
 WORKDIR /home/gigasource
 RUN mkdir -p /home/gigasource/storage
 COPY . .
-# Set access token to access private github repositories
+# Set access token to access private github repositories then start building
 RUN mv ./ssh ~/.ssh && \
     chmod -R 700 ~/.ssh && \
-# Build, NODE_ENV is set to production to skip npm preinstall script
-    NODE_ENV=production npm install --unsafe-perm && \
-    npm run install-plugins
-WORKDIR /home/gigasource/backoffice
-RUN npm install && \
+    npm install --unsafe-perm && \
+    mv ./cms-configs/$CONFIG_FILE_NAME ./config/config.json && \
+    npm run install-plugins && \
     npm run build
+# Cleanup unused & sensitive files
 WORKDIR /home/gigasource
 RUN rm -rf ./backoffice && \
     rm -rf ./cms-configs && \
