@@ -22,7 +22,7 @@ pipeline {
           ).trim()
         }
 
-        script {image = docker.build("${env.dockerImageName}:$CURRENT_DATETIME", "-f ./cicd/Dockerfile --build-arg CONFIG_FILE_NAME=${env.configFileName} .")}
+        script {image = docker.build("${env.dockerImageName}:$CURRENT_DATETIME", "-f ./cicd/Dockerfile --no-cache=true --build-arg CONFIG_FILE_NAME=${env.configFileName} .")}
       }
     }
 
