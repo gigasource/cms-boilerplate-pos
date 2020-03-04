@@ -26,28 +26,9 @@ pipeline {
       }
     }
 
-    stage('Push Docker image to registry') {
-      steps {
-        script {
-          docker.withRegistry(env.registryName, env.registryCredentialId) {
-            image.push()
-          }
-        }
-      }
-    }
-
     stage('Remove locally built Docker image') {
       steps {
         sh "docker rmi $dockerImageName:$CURRENT_DATETIME"
-      }
-    }
-
-    stage('Upgrade image version in Rancher') {
-      steps {
-        withKubeConfig([credentialsId: "${env.kubeCredentialId}"]) {
-          sh "kubectl config set-context --current --namespace=${env.kubeNamespace}"
-          sh "kubectl set image ${env.rancherWorkloadType}/${env.rancherWorkloadName} ${env.rancherWorkloadName}=${env.dockerImageName}:$CURRENT_DATETIME --record"
-        }
       }
     }
 
