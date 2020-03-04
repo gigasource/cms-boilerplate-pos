@@ -1,0 +1,20 @@
+{
+  "name": "POS",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "dist": "electron-packager .",
+    "dist:win32": "rm -rf POS-win32-x64 && electron-packager . --overwrite --platform=win32 --arch=x64 --icon=icon.ico && mkdir POS-win32-x64/data && zip -r ../electron.zip POS-win32-x64"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "electron": "^7.1.7",
+    "electron-builder": "^21.2.0",
+    "electron-packager": "^14.1.1"
+  }
+}
