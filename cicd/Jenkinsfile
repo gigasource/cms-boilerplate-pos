@@ -8,7 +8,7 @@ pipeline {
           sh "echo $GITBOT_ACCESS_TOKEN > ./gitbot-access-token"
         }
         withCredentials([string(credentialsId: 'gigasource-github-access-token', variable: 'GIGASOURCE_ACCESS_TOKEN')]) {
-          sh "echo $GGIGASOURCE_ACCESS_TOKEN > ./gigasource-access-token"
+          sh "echo $GIGASOURCE_ACCESS_TOKEN > ./gigasource-access-token"
         }
         sh "cp -r ~/.ssh ./ssh"
         sh "mkdir -p ./config"
