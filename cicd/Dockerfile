@@ -11,22 +11,18 @@ RUN mv ./ssh ~/.ssh && \
     mv ./cms-configs/$CONFIG_FILE_NAME ./config/config.json && \
     npm run install-plugins && \
     npm run build
+RUN cd pkg && \
+    npm install && \
+    npm run build:win32 && \
+    cd ../electron && \
+    npm install && \
+    npm run dist:win32 && \
+    cd ..
+RUN GIGASOURCE_ACCESS_TOKEN=./gigasource-access-token && \
+    ./cicd/scripts/upload-github-release-asset.sh github_api_token=$GIGASOURCE_ACCESS_TOKEN owner=gigasource repo=cms-boilerplate-pos tag=v1.0 filename=./electron.zip
+
 # Cleanup unused & sensitive files
 WORKDIR /home/gigasource
 RUN rm -rf ./backoffice && \
     rm -rf ./cms-configs && \
     rm -rf ~/.ssh
-
-# Final image will be built from this point
-FROM node:10
-WORKDIR /home/gigasource
-# Install fonts
-RUN apt update && \
-    apt install cabextract -y && \
-    apt install xfonts-utils -y && \
-    wget http://ftp.de.debian.org/debian/pool/contrib/m/msttcorefonts/ttf-mscorefonts-installer_3.6_all.deb && \
-    dpkg -i ttf-mscorefonts-installer_3.6_all.deb
-# Copy files from intermediate container
-COPY --from=intermediate /home/gigasource /home/gigasource
-EXPOSE 8888
-ENTRYPOINT ["/bin/sh", "./cicd/scripts/container-startup-script.sh"]
