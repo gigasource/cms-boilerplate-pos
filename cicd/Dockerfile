@@ -13,7 +13,7 @@ RUN mv ./ssh ~/.ssh && \
     npm run build
 RUN apt update && \
     apt install zip -y && \
-    apt install wine64 && \
+    apt install wine64 -y && \
     cd pkg && \
     npm install && \
     npm run build:win32 && \
