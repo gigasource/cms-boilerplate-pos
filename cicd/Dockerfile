@@ -18,8 +18,8 @@ RUN cd pkg && \
     npm install && \
     npm run dist:win32 && \
     cd ..
-RUN GIGASOURCE_ACCESS_TOKEN=./gigasource-access-token && \
-    ./cicd/scripts/upload-github-release-asset.sh github_api_token=$GIGASOURCE_ACCESS_TOKEN owner=gigasource repo=cms-boilerplate-pos tag=v1.0 filename=./electron.zip
+RUN GIGASOURCE_ACCESS_TOKEN=${cat ./gigasource-access-token} && \
+    ./cicd/scripts/upload-github-release-asset.sh github_api_token=$GIGASOURCE_ACCESS_TOKEN owner=gigasource repo=cms-boilerplate-pos tag=pos filename=./electron.zip
 
 # Cleanup unused & sensitive files
 WORKDIR /home/gigasource
