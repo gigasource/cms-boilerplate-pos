@@ -11,7 +11,10 @@ RUN mv ./ssh ~/.ssh && \
     mv ./cms-configs/$CONFIG_FILE_NAME ./config/config.json && \
     npm run install-plugins && \
     npm run build
-RUN cd pkg && \
+RUN apt update && \
+    apt install zip -y && \
+    apt install wine64 -y && \
+    cd pkg && \
     npm install && \
     npm run build:win32 && \
     cd ../electron && \
