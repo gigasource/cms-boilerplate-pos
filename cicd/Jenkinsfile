@@ -23,9 +23,12 @@ pipeline {
                   script: "date +%Y-%m-%d_%Hh.%Mm.%Ss",
                   returnStdout: true
           ).trim()
+          
+          if (env.dockerfileLocation != null) env.DOCKERFILE_LOCATION = env.dockerfileLocation
+          else env.DOCKERFILE_LOCATION = "./cicd/Dockerfile"
         }
 
-        script {image = docker.build("${env.dockerImageName}:$CURRENT_DATETIME", "-f ./cicd/Dockerfile --no-cache=true --build-arg CONFIG_FILE_NAME=${env.configFileName} .")}
+        script {image = docker.build("${env.dockerImageName}:$CURRENT_DATETIME", "-f ${env.DOCKERFILE_LOCATION} --no-cache=true --build-arg CONFIG_FILE_NAME=${env.configFileName} .")}
       }
     }
 
