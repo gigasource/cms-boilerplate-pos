@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "fetch": "git clone --depth=1 https://github.com/gigasource/pos-android.git",
+    "fetch": "git clone --depth=1 git@github.com:gigasource/pos-android.git",
     "build": "cd pos-android && ./gradlew build"
   },
   "author": "",
