@@ -17,14 +17,14 @@ RUN cd android && \
     npm install && \
     npm run build:android
 
-FROM openjdk:8
+FROM thyrlian/android-sdk
 COPY --from=node-builder /home/gigasource /home/gigasource
 WORKDIR /home/gigasource
-RUN cd ./android && \
-    cd pos-android && \
+RUN apt update && apt install curl -y && \
+    cd ./android/pos-android && \
     ./gradlew build && \
-    cd pos-android/app/build/output/apk/debug
-RUN GIGASOURCE_ACCESS_TOKEN=${cat ./gigasource-access-token} && \
+    mv ./app/build/outputs/apk/debug/app-debug.apk /home/gigasource/app-debug.apk
+RUN GIGASOURCE_ACCESS_TOKEN=$(cat ./gigasource-access-token) && \
     ./cicd/scripts/upload-github-release-asset.sh github_api_token=$GIGASOURCE_ACCESS_TOKEN owner=gigasource repo=cms-boilerplate-pos tag=pos filename=./app-debug.apk
 
 # Cleanup unused & sensitive files
