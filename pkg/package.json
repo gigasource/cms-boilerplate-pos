@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "pkg:macos": "pkg --config pkg.config.js --targets node10-macos-x64 --output out/app index.js --no-bytecode",
-    "build:win32": "node win32/pkg.js"
+    "build:win32": "node win32/pkg.js",
+    "build:android": "node android/pkg.js"
   },
   "author": "",
   "license": "ISC",

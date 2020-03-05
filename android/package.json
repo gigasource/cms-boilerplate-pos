@@ -1,0 +1,13 @@
+{
+  "name": "android",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "fetch": "git clone --depth=1 https://github.com/gigasource/pos-android.git",
+    "build": "cd pos-android && ./gradlew build"
+  },
+  "author": "",
+  "license": "ISC"
+}

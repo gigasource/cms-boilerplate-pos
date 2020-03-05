@@ -1,0 +1,28 @@
+# Intermediate container, this will be disposed in the final image
+FROM node:10 as intermediate
+ARG CONFIG_FILE_NAME
+WORKDIR /home/gigasource
+RUN mkdir -p /home/gigasource/storage
+COPY . .
+# Set access token to access private github repositories then start building
+RUN mv ./ssh ~/.ssh && \
+    chmod -R 700 ~/.ssh && \
+    npm install --unsafe-perm && \
+    mv ./cms-configs/$CONFIG_FILE_NAME ./config/config.json && \
+    npm run install-plugins && \
+    npm run build
+RUN cd android && \
+    npm run fetch && \
+    cd ../pkg && \
+    npm run build:android && \
+    cd ../android && \
+    npm run build && \
+    cd pos-android/app/build/output/apk/debug
+RUN GIGASOURCE_ACCESS_TOKEN=${cat ./gigasource-access-token} && \
+    ./cicd/scripts/upload-github-release-asset.sh github_api_token=$GIGASOURCE_ACCESS_TOKEN owner=gigasource repo=cms-boilerplate-pos tag=pos filename=./app-debug.apk
+
+# Cleanup unused & sensitive files
+WORKDIR /home/gigasource
+RUN rm -rf ./backoffice && \
+    rm -rf ./cms-configs && \
+    rm -rf ~/.ssh
