@@ -5,6 +5,7 @@ WORKDIR /home/gigasource
 RUN mkdir -p /home/gigasource/storage
 COPY . .
 # Set access token to access private github repositories then start building
+RUN GIGASOURCE_ACCESS_TOKEN=$(cat ./gigasource-access-token)
 RUN mv ./ssh ~/.ssh && \
     chmod -R 700 ~/.ssh && \
     npm install --unsafe-perm && \
@@ -15,7 +16,10 @@ RUN cd android && \
     npm run fetch && \
     cd pos-android && \
     git checkout pos-restaurant && \
-    cd ../../pkg && \
+    cd app && \
+    curl -H 'Authorization: token $GIGASOURCE_ACCESS_TOKEN' -H 'Accept: application/vnd.github.v3.raw' -O -L https://api.github.com/repos/gigasource/key-files/pos-restaurant-android/build.gradle && \
+    curl -H 'Authorization: token $GIGASOURCE_ACCESS_TOKEN' -H 'Accept: application/vnd.github.v3.raw' -O -L https://api.github.com/repos/gigasource/key-files/pos-restaurant-android/pos-android-key-store && \
+    cd ../../../pkg && \
     npm install && \
     npm run build:android
 
@@ -25,9 +29,9 @@ WORKDIR /home/gigasource
 RUN apt update && apt install curl -y && \
     cd ./android/pos-android && \
     ./gradlew build && \
-    mv ./app/build/outputs/apk/debug/app-debug.apk /home/gigasource/app-debug.apk
+    mv ./app/build/outputs/apk/release/app-release.apk /home/gigasource/pos-restaurant-app-release.apk
 RUN GIGASOURCE_ACCESS_TOKEN=$(cat ./gigasource-access-token) && \
-    ./cicd/scripts/upload-github-release-asset.sh github_api_token=$GIGASOURCE_ACCESS_TOKEN owner=gigasource repo=cms-boilerplate-pos tag=pos filename=./app-debug.apk
+    ./cicd/scripts/upload-github-release-asset.sh github_api_token=$GIGASOURCE_ACCESS_TOKEN owner=gigasource repo=cms-boilerplate-pos tag=pos filename=./pos-restaurant-app-release.apk
 
 # Cleanup unused & sensitive files
 WORKDIR /home/gigasource
