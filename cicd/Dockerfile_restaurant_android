@@ -13,9 +13,8 @@ RUN mv ./ssh ~/.ssh && \
     npm run install-plugins && \
     npm run build
 RUN cd android && \
-    npm run fetch && \
+    git clone --depth=1 --branch pos-restaurant git@github.com:gigasource/pos-android.git && \
     cd pos-android && \
-    git checkout pos-restaurant && \
     cd app && \
     curl -H 'Authorization: token $GIGASOURCE_ACCESS_TOKEN' -H 'Accept: application/vnd.github.v3.raw' -O -L https://api.github.com/repos/gigasource/key-files/pos-restaurant-android/build.gradle && \
     curl -H 'Authorization: token $GIGASOURCE_ACCESS_TOKEN' -H 'Accept: application/vnd.github.v3.raw' -O -L https://api.github.com/repos/gigasource/key-files/pos-restaurant-android/pos-android-key-store && \
