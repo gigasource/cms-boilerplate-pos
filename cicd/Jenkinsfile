@@ -13,6 +13,7 @@ pipeline {
         sh "cp -r ~/.ssh ./ssh"
         sh "mkdir -p ./config"
         sh "mkdir -p ./plugins"
+        sh "cp /var/jenkins_home/files/feed2wall/ssh.cfg ./"
       }
     }
 
@@ -23,7 +24,7 @@ pipeline {
                   script: "date +%Y-%m-%d_%Hh.%Mm.%Ss",
                   returnStdout: true
           ).trim()
-          
+
           if (env.dockerfileLocation != null) env.DOCKERFILE_LOCATION = env.dockerfileLocation
           else env.DOCKERFILE_LOCATION = "./cicd/Dockerfile"
         }
