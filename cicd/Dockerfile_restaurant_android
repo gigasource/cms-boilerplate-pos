@@ -11,6 +11,20 @@ RUN mv ./ssh ~/.ssh && \
     mv ./cms-configs/$CONFIG_FILE_NAME ./config/config.json && \
     npm run install-plugins && \
     npm run build
+# Build electrion
+RUN apt update && \
+    apt install zip -y && \
+    apt install wine64 -y && \
+    cd pkg && \
+    npm install && \
+    npm run build:win32 && \
+    cd ../electron && \
+    npm install && \
+    npm run dist:win32 && \
+    cd .. && \
+    mv electron.zip pos-restaurant-electron.zip
+RUN GIGASOURCE_ACCESS_TOKEN=$(cat ./gigasource-access-token) && \
+    /bin/bash ./cicd/scripts/upload-github-release-asset.sh github_api_token=$GIGASOURCE_ACCESS_TOKEN owner=gigasource repo=cms-boilerplate-pos tag=pos filename=./pos-restaurant-electron.zip
 # Build android
 RUN GIGASOURCE_ACCESS_TOKEN=$(cat ./gigasource-access-token) && \
     cd android && \
@@ -24,12 +38,12 @@ RUN GIGASOURCE_ACCESS_TOKEN=$(cat ./gigasource-access-token) && \
     npm run build:android && \
     cd ..
 # Download original apk and update patch
-RUN source ./ssh.cfg && \
+RUN ./ssh.cfg && \
     rm -rf /var/jenkins_home/files/feed2wall/apk && \
     mkdir -p /var/jenkins_home/files/feed2wall/apk && \
     sshpass -p ${pwd} scp -r ${usr}@${domain}:/home/dev/tinker-server/archive/posRestaurantPatching/* /var/jenkins_home/files/feed2wall/apk/ && \
     echo "Download finished" && \
-    source ./cicd/scripts/create-patch-file.sh
+    ./cicd/scripts/create-patch-file.sh
 
 # Build new apk
 FROM thyrlian/android-sdk
