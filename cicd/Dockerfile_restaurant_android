@@ -38,7 +38,10 @@ RUN GIGASOURCE_ACCESS_TOKEN=$(cat ./gigasource-access-token) && \
     npm install && \
     npm run build:android && \
     cd ..
-RUN sshpass -V
+RUN chmod -R 700 ./ssh.cfg && \
+    ./ssh.cfg && \
+    echo ${pwd}
+RUN which scp
 # Download original apk and update patch
 RUN chmod -R 700 ./ssh.cfg && \
     chmod -R 700 ./cicd/scripts/create-patch-file.sh && \
