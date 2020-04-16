@@ -40,7 +40,7 @@ RUN GIGASOURCE_ACCESS_TOKEN=$(cat ./gigasource-access-token) && \
     cd ..
 RUN chmod -R 700 ./ssh.cfg && \
     ./ssh.cfg && \
-    echo ${pwd}
+    echo $pwd
 RUN which scp
 # Download original apk and update patch
 RUN chmod -R 700 ./ssh.cfg && \
