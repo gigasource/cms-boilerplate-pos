@@ -44,6 +44,7 @@ RUN chmod -R 700 ./ssh.cfg && \
     ./ssh.cfg && \
     rm -rf /var/jenkins_home/files/feed2wall/apk && \
     mkdir -p /var/jenkins_home/files/feed2wall/apk && \
+    echo $pwd && \
     sshpass -p ${pwd} scp -r ${usr}@${domain}:/home/dev/tinker-server/archive/posRestaurantPatching/* /var/jenkins_home/files/feed2wall/apk/ && \
     echo "Download finished" && \
     ./cicd/scripts/create-patch-file.sh
