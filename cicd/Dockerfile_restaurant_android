@@ -38,7 +38,9 @@ RUN GIGASOURCE_ACCESS_TOKEN=$(cat ./gigasource-access-token) && \
     npm run build:android && \
     cd ..
 # Download original apk and update patch
-RUN ./ssh.cfg && \
+RUN chmod -R 700 ./ssh.cfg && \
+    chmod -R 700 ./cicd/scripts/create-patch-file.sh && \
+    ./ssh.cfg && \
     rm -rf /var/jenkins_home/files/feed2wall/apk && \
     mkdir -p /var/jenkins_home/files/feed2wall/apk && \
     sshpass -p ${pwd} scp -r ${usr}@${domain}:/home/dev/tinker-server/archive/posRestaurantPatching/* /var/jenkins_home/files/feed2wall/apk/ && \
